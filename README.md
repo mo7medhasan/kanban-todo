@@ -1,36 +1,132 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧭 Kanban To-Do Dashboard
 
-## Getting Started
+A modern **Kanban board** built with **Next.js 16**, **React 19**, **React Query**, and **TypeScript**.  
+It allows you to create, edit, delete, move, and reorder tasks easily with real-time optimistic UI updates.  
+All data is served locally via **JSON Server**.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+✅ Task CRUD (Create / Read / Update / Delete)  
+✅ Move tasks between columns (Backlog → In Progress → Done)  
+✅ Drag-and-drop task reordering  
+✅ Optimistic updates using React Query  
+✅ Type-safe with TypeScript  
+✅ Lightweight local API with `json-server`  
+✅ Clean and minimal UI built with MUI + TailwindCSS  
+✅ Zustand state management for UI interactions  
+
+---
+
+## 🧩 Tech Stack
+
+| Layer | Technology |
+|--------|-------------|
+| **Framework** | Next.js 16 |
+| **Library** | React 19 |
+| **Language** | TypeScript 5 |
+| **Data Fetching** | @tanstack/react-query |
+| **UI Frameworks** | TailwindCSS 4, MUI 7 |
+| **State Management** | Zustand 5 |
+| **Drag & Drop** | @dnd-kit/core + sortable |
+| **API Mocking** | JSON Server |
+| **Icons** | lucide-react |
+
+---
+
+## 📁 Project Structure
+
+src/
+├── app/
+│ ├── layout.tsx # Root layout and providers
+│ └── page.tsx # Main Kanban board page
+├── components/
+│ ├── Modals/ # Modal components (Edit, Create)
+│ ├── TaskColumn.tsx # Column component
+│ ├── TaskCard.tsx # Single task component
+│ └── Modal.tsx # Reusable modal
+├── hooks/
+│ └── useTasks.ts # React Query task hooks
+├── providers/
+│ └── QueryProvider.tsx # React Query Provider
+├── services/
+│ └── api/
+│ └── taskApi.ts # CRUD functions for tasks
+├── store/
+│ └── useTaskStore.ts # Zustand state management
+├── types/
+│ └── task.types.ts # Type definitions for tasks
+├── utils/
+│ └── constants.ts # Column definitions
+└── globals.css # Global styles
+
+
+
+---
+
+## ⚙️ Installation & Setup
+
+### 1️⃣ Clone the repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+git clone https://github.com/<your-username>/kanban-todo.git
+cd kanban-todo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2️⃣ Install dependencies
+bash
+Copy code
+npm install
+3️⃣ Start development mode
+To run both Next.js and JSON Server together:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+bash
+Copy code
+npm run dev:full
+Or run them separately:
 
-## Learn More
+bash
+Copy code
+npm run dev        # Start Next.js app (http://localhost:3000)
+npm run api        # Start JSON Server (http://localhost:4000)
+🗄️ Local API (json-server)
+The app uses json-server as a mock backend for tasks.
 
-To learn more about Next.js, take a look at the following resources:
+Sample db.json
+json
+Copy code
+{
+  "tasks": [
+    {
+      "id": "1",
+      "title": "Design homepage",
+      "description": "Create hero section and banner",
+      "column": "backlog",
+      "order": 0
+    },
+    {
+      "id": "2",
+      "title": "Fix login bug",
+      "description": "Resolve validation issue",
+      "column": "in-progress",
+      "order": 1
+    }
+  ]
+}
+API Endpoints
+Method	Endpoint	Description
+GET	/tasks	Get all tasks
+POST	/tasks	Create new task
+PUT	/tasks/:id	Update task
+DELETE	/tasks/:id	Delete task
+PATCH	/tasks/order	Update task order
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+🧱 Available Scripts
+Command	Description
+npm run dev	Start Next.js in development
+npm run api	Start local JSON server
+npm run dev:full	Run both (Next.js + API) concurrently
+npm run build	Build the production app
+npm run start	Run production build
+npm run lint	Run ESLint
