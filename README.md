@@ -36,7 +36,7 @@ All data is served locally via **JSON Server**.
 ---
 
 ## 📁 Project Structure
-
+```bash
 src/
 ├── app/
 │ ├── layout.tsx # Root layout and providers
@@ -70,7 +70,7 @@ src/
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/kanban-todo.git
+git clone https://github.com/mo7medhasan/kanban-todo.git
 cd kanban-todo
 
 
