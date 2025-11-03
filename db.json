@@ -31,13 +31,17 @@
       "id": "5",
       "title": "Code cleanupdsd",
       "description": "Refactor code to improve readability",
-      "column": "in progress"
+      "column": "in progress",
+      "order": 1
+
     },
     {
       "id": "6",
       "title": "Write documentation",
       "description": "Document the API endpoints and usage",
-      "column": "in progress"
+      "column": "in progress",
+      "order": 2
+
     },
     {
       "id": "7",
@@ -59,20 +63,6 @@
       "description": "hello",
       "column": "review",
       "order": 2
-    },
-    {
-      "id": "4068",
-      "title": "dsf fsd f",
-      "description": "dsf dsfsd fdsf ",
-      "column": "in-progress",
-      "order": 3
-    },
-    {
-      "id": "cc51",
-      "title": "him ",
-      "description": "m dfsg fds5 65gd6546545",
-      "column": "done",
-      "order": 0
     }
   ]
 }

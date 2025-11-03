@@ -15,6 +15,13 @@ export const useDragAndDrop = (
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const [dropTargetId, setDropTargetId] = useState<string | null>(null); // Track the specific task being hovered over
 
+/**
+ * Handle drag start event for a task.
+ * Sets the dragged task data and allows the move effect.
+ * @param {React.DragEvent} e - The drag start event.
+ * @param {string} taskId - The ID of the task being dragged.
+ * @param {string} columnId - The ID of the column the task is being dragged from.
+ */
   const handleDragStart = (e: React.DragEvent, taskId: string, columnId: string) => {
     e.dataTransfer.setData('text/plain', taskId);
     e.dataTransfer.setData('application/json', JSON.stringify({ taskId, sourceColumnId: columnId }));
