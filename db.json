@@ -4,8 +4,8 @@
       "id": "1",
       "title": "Design login page",
       "description": "Create a mockup for the new login page",
-      "column": "in-progress",
-      "order": 0
+      "column": "review",
+      "order": 1
     },
     {
       "id": "2",
@@ -33,7 +33,6 @@
       "description": "Refactor code to improve readability",
       "column": "in progress",
       "order": 1
-
     },
     {
       "id": "6",
@@ -41,7 +40,6 @@
       "description": "Document the API endpoints and usage",
       "column": "in progress",
       "order": 2
-
     },
     {
       "id": "7",
@@ -54,7 +52,7 @@
       "id": "8",
       "title": "Deploy to production",
       "description": "Push the latest changes to the live server",
-      "column": "in-progress",
+      "column": "backlog",
       "order": 1
     },
     {
@@ -62,7 +60,7 @@
       "title": "hi ",
       "description": "hello",
       "column": "review",
-      "order": 2
+      "order": 0
     }
   ]
 }
