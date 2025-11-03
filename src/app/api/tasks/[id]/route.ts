@@ -14,19 +14,20 @@ async function writeDB(newData: { tasks: Task[] }) {
   await fs.writeFile(dbPath, JSON.stringify(newData, null, 2), "utf8");
 }
 
-// GET /api/tasks/:id
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+// ✅ FIX: Await the params promise before using it
+export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const db = await readDB();
-  const task = db.tasks.find(t => t.id === params.id);
+  const task = db.tasks.find((t) => t.id === id);
   return task ? NextResponse.json(task) : NextResponse.json({ error: "Not found" }, { status: 404 });
 }
 
-// PATCH /api/tasks/:id
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const updates = await request.json();
   const db = await readDB();
 
-  const index = db.tasks.findIndex(t => t.id === params.id);
+  const index = db.tasks.findIndex((t) => t.id === id);
   if (index === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   db.tasks[index] = { ...db.tasks[index], ...updates };
@@ -35,10 +36,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   return NextResponse.json(db.tasks[index]);
 }
 
-// DELETE /api/tasks/:id
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const db = await readDB();
-  db.tasks = db.tasks.filter(t => t.id !== params.id);
+  db.tasks = db.tasks.filter((t) => t.id !== id);
   await writeDB(db);
   return NextResponse.json({}, { status: 204 });
 }

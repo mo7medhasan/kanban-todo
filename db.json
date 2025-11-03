@@ -4,7 +4,7 @@
       "id": "1",
       "title": "Design login page",
       "description": "Create a mockup for the new login page",
-      "column": "review",
+      "column": "done",
       "order": 1
     },
     {
@@ -45,7 +45,7 @@
       "id": "7",
       "title": "Fix login bug",
       "description": "Resolve the issue with login errors",
-      "column": "backlog",
+      "column": "in-progress",
       "order": 2
     },
     {
