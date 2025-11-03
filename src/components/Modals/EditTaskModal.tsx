@@ -20,8 +20,7 @@ export const EditTaskModal: React.FC<EditTaskModalProps> = ({
 const [formData, setFormData] = useState<TaskFormData>({
     title: task?.title || "",
     description: task?.description || "",
-    column: task?.column || "backlog",
-    id: task?.id || "",
+    column: task?.column as ColumnId || "backlog",
     order: task?.order || 0,
   });
 
@@ -30,7 +29,7 @@ const [formData, setFormData] = useState<TaskFormData>({
 
   const handleSubmit = () => {
     if (task && formData.title.trim()) {
-      onEdit(task.id, formData);
+      onEdit(task._id, formData);
       onClose();
     }
   };

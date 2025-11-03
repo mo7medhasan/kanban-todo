@@ -16,7 +16,7 @@ import { useTaskStore } from "@/hooks/useTaskStore";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
 import { COLUMNS } from "@/utils/constants";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
-import { Task } from "@/types/task.types";
+import { ColumnId, Task } from "@/types/task.types";
 
 export default function KanbanBoardWithAPI() {
   const {
@@ -82,7 +82,7 @@ export default function KanbanBoardWithAPI() {
             <Column
               key={column.id}
               title={column.title}
-              columnId={column.id}
+              columnId={column.id as ColumnId}
               tasks={tasksByColumn[column.id]}
               onEdit={openEditModal}
               onDelete={(id) => deleteTask.mutate(id)}
@@ -109,7 +109,7 @@ export default function KanbanBoardWithAPI() {
           onClose={closeEditModal}
           onEdit={(id, updates) => updateTask.mutate({ id, updates })}
           task={editingTask}
-          key={editingTask?.id}
+          key={editingTask?._id}
         />
       </div>
     </div>

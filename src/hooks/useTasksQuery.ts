@@ -55,7 +55,7 @@ export const useMoveTask = () => {
       const previous = queryClient.getQueryData<Task[]>([TASKS_QUERY_KEY]);
       queryClient.setQueryData<Task[]>([TASKS_QUERY_KEY], (old) =>
         old?.map((task) =>
-          task.id === id ? { ...task, column: newColumn as never } : task
+          task._id === id ? { ...task, column: newColumn as never } : task
         )
       );
       return { previous };
@@ -94,10 +94,10 @@ export const useUpdateTaskOrder = () => {
         if (!old) return old;
 
         const updated = old.map((t) =>
-          taskIds.includes(t.id)
+          taskIds.includes(t._id)
             ? {
                 ...t,
-                order: taskIds.indexOf(t.id),
+                order: taskIds.indexOf(t._id),
                 column,
               }
             : t

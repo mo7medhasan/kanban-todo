@@ -86,12 +86,12 @@ export const useDragAndDrop = (
 
   const handleReorderWithinColumn = (columnId: string, draggedId: string, targetId: string) => {
     const columnTasks = tasks.filter(t => t.column === columnId);
-    const draggedIndex = columnTasks.findIndex(t => t.id === draggedId);
-    const targetIndex = columnTasks.findIndex(t => t.id === targetId);
+    const draggedIndex = columnTasks.findIndex(t => t._id === draggedId);
+    const targetIndex = columnTasks.findIndex(t => t._id === targetId);
 
     if (draggedIndex === -1 || targetIndex === -1) return;
 
-    const newOrder = [...columnTasks.map(t => t.id)];
+    const newOrder = [...columnTasks.map(t => t._id)];
     const [removed] = newOrder.splice(draggedIndex, 1);
     // Determine where to insert based on the target task's index
     const insertIndex = newOrder.indexOf(targetId);

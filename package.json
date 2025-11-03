@@ -8,7 +8,7 @@
         "dev:full": "concurrently \"npm run dev\" \"npm run api\"",
         "build": "next build",
         "start": "next start",
-        "start:full": "concurrently \"npm run api\" \"npm run start\"", 
+        "start:full": "concurrently \"npm run api\" \"npm run start\"",
         "lint": "eslint"
     },
     "dependencies": {
@@ -16,6 +16,7 @@
         "@tanstack/react-query-devtools": "^5.90.2",
         "axios": "^1.13.1",
         "lucide-react": "^0.552.0",
+        "mongodb": "^6.20.0",
         "next": "16.0.1",
         "react": "19.2.0",
         "react-dom": "19.2.0",

@@ -51,7 +51,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           <Edit2 size={18} />
         </button>
         <button
-          onClick={() => onDelete(task.id)}
+          onClick={() => onDelete(task._id)}
           className="text-gray-600 hover:text-red-600 transition-colors"
         >
           <Trash2 size={18} />

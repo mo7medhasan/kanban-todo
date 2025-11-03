@@ -1,7 +1,7 @@
 export type ColumnId = "backlog" | "in-progress" | "review" | "done";
 
 export interface Task {
-  id: string;
+  _id: string;           // ✅ من MongoDB
   title: string;
   description: string;
   column: ColumnId;
@@ -13,10 +13,4 @@ export interface Column {
   title: string;
 }
 
-export interface TaskFormData {
-  title: string;
-  description: string;
-  column: ColumnId;
-    id?: string;
-    order?: number;
-}
+export type TaskFormData = Omit<Task, "_id">;

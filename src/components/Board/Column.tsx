@@ -65,15 +65,15 @@ const sortedTasks = [...tasks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
         ) : (
           sortedTasks.map(task => (
             <TaskCard 
-              key={task.id} 
+              key={task._id} 
               task={task} 
               onEdit={onEdit} 
               onDelete={onDelete} 
-              handleDragStart={(e) => handleDragStart(e, task.id, task.column)}
-              handleDragOver={(e) => handleDragOver(e, task.column, task.id)}
-              handleDragLeave={(e) => handleDragLeave(e, task.column, task.id)}
-              handleDrop={(e) => handleDrop(e, task.column, task.id)}
-              isDropTarget={dropTargetId === task.id}
+              handleDragStart={(e) => handleDragStart(e, task._id, task.column)}
+              handleDragOver={(e) => handleDragOver(e, task.column, task._id)}
+              handleDragLeave={(e) => handleDragLeave(e, task.column, task._id)}
+              handleDrop={(e) => handleDrop(e, task.column, task._id)}
+              isDropTarget={dropTargetId === task._id}
             />
           ))
         )}

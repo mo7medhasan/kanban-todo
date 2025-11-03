@@ -19,9 +19,10 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     title: '',
     description: '',
     column: 'backlog',
+    order: 0,
   });
 
-  const resetForm = () => setFormData({ title: '', description: '', column: 'backlog' });
+  const resetForm = () => setFormData({ title: '', description: '', column: 'backlog', order: 0, });
 
   const handleSubmit = () => {
     if (formData.title.trim()) {

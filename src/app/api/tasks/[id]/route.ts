@@ -1,45 +1,56 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { NextResponse } from "next/server";
-import type { Task } from "../route";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
-const dbPath = path.join(process.cwd(), "db.json");
+// ✅ Get one task
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params; // ✅ لازم await هنا
+  const client = await clientPromise;
+  const db = client.db(process.env.MONGODB_DB);
 
-async function readDB(): Promise<{ tasks: Task[] }> {
-  const data = await fs.readFile(dbPath, "utf8");
-  return JSON.parse(data);
+  const task = await db.collection("tasks").findOne({ _id: new ObjectId(id) });
+  return NextResponse.json(task);
 }
 
-async function writeDB(newData: { tasks: Task[] }) {
-  await fs.writeFile(dbPath, JSON.stringify(newData, null, 2), "utf8");
-}
+// ✅ Update task
+export async function PATCH(
+    req: Request,
+    { params }: { params: Promise<{ id: string }> }
+  ) {
+    const { id } = await params;
+    const updates = await req.json();
+    const client = await clientPromise;
+      const db = client.db(process.env.MONGODB_DB);
+  
+    try {
+      const result = await db.collection("tasks").updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updates }
+      );
+  
+      if (result.matchedCount === 0)
+        return NextResponse.json({ error: "Task not found" }, { status: 404 });
+  
+      return NextResponse.json({ success: true });
+    } catch (error) {
+      console.error("PATCH error:", error);
+      return NextResponse.json({ error: "Invalid ID" }, { status: 500 });
+    }
+  }
+  
 
-// ✅ FIX: Await the params promise before using it
-export async function GET(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const db = await readDB();
-  const task = db.tasks.find((t) => t.id === id);
-  return task ? NextResponse.json(task) : NextResponse.json({ error: "Not found" }, { status: 404 });
-}
+// ✅ Delete task
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ id: string }> }
+) {
+  const { id } = await context.params; // ✅
+  const client = await clientPromise;
+  const db = client.db(process.env.MONGODB_DB);
 
-export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const updates = await request.json();
-  const db = await readDB();
-
-  const index = db.tasks.findIndex((t) => t.id === id);
-  if (index === -1) return NextResponse.json({ error: "Not found" }, { status: 404 });
-
-  db.tasks[index] = { ...db.tasks[index], ...updates };
-  await writeDB(db);
-
-  return NextResponse.json(db.tasks[index]);
-}
-
-export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const db = await readDB();
-  db.tasks = db.tasks.filter((t) => t.id !== id);
-  await writeDB(db);
-  return NextResponse.json({}, { status: 204 });
+  await db.collection("tasks").deleteOne({ _id: new ObjectId(id) });
+  return NextResponse.json({ success: true });
 }

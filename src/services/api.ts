@@ -61,11 +61,6 @@ export const taskApi = {
     return response.data;
   },
 
-  // Update task
-  updateTask: async (id: string, updates: Partial<Task>): Promise<Task> => {
-    const response = await api.patch<Task>(`/tasks/${id}`, updates);
-    return response.data;
-  },
   updateTaskOrder: async (column: string, taskIds: string[]): Promise<void> => {
 
   const updatePromises = taskIds.map((id, index) =>
@@ -75,15 +70,23 @@ export const taskApi = {
 },
 
   // Delete task
-  deleteTask: async (id: string): Promise<void> => {
-    await api.delete(`/tasks/${id}`);
-  },
 
   // Move task to different column
-  moveTask: async (id: string, newColumn: string): Promise<Task> => {
-    const response = await api.patch<Task>(`/tasks/${id}`, {
-      column: newColumn,
-    });
+  // Update task
+  updateTask: async (_id: string, updates: Partial<Task>): Promise<Task> => {
+    const response = await api.patch<Task>(`/tasks/${_id}`, updates);
     return response.data;
   },
+  
+  // Delete task
+  deleteTask: async (_id: string): Promise<void> => {
+    await api.delete(`/tasks/${_id}`);
+  },
+  
+  // Move task
+  moveTask: async (_id: string, newColumn: string): Promise<Task> => {
+    const response = await api.patch<Task>(`/tasks/${_id}`, { column: newColumn });
+    return response.data;
+  },
+  
 };
