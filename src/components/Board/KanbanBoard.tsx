@@ -65,7 +65,7 @@ export default function KanbanBoardWithAPI() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-linear-to-br from-teal-600 to-cyan-70000 p-8">
       <div className="max-w-7xl mx-auto">
         <SearchBar
           searchQuery={searchQuery}
