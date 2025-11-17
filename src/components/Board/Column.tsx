@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { TaskCard } from './TaskCard';
 import { Task, ColumnId } from '@/types/task.types';
 import { DraggedTaskData } from '@/hooks/useDragAndDrop';
@@ -11,7 +11,7 @@ interface ColumnProps {
   onDelete: (id: string) => void;
   draggedTask: DraggedTaskData | null;
   dragOverColumn: string | null;
-  dropTargetId: string | null; // Receive drop target ID
+  dropTargetId: string | null;
   handleDragStart: (e: React.DragEvent, taskId: string, columnId: string) => void;
   handleDragOver: (e: React.DragEvent, columnId: string, taskId?: string) => void;
   handleDragLeave: (e: React.DragEvent, columnId: string, taskId?: string) => void;
@@ -25,6 +25,7 @@ export const Column: React.FC<ColumnProps> = ({
   tasks = [], 
   onEdit, 
   onDelete,
+  draggedTask,
   dragOverColumn,
   dropTargetId,
   handleDragStart,
@@ -35,13 +36,79 @@ export const Column: React.FC<ColumnProps> = ({
 }) => {
   const isOver = dragOverColumn === columnId;
   const isEmpty = tasks.length === 0;
-const sortedTasks = [...tasks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const sortedTasks = [...tasks].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  
+  const columnRef = useRef<HTMLDivElement>(null);
+  const animationFrameId = useRef<number | null>(null);
+
+  // Auto-scroll within column when dragging near edges
+  useEffect(() => {
+    if (!draggedTask) {
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+        animationFrameId.current = null;
+      }
+      return;
+    }
+
+    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+      const column = columnRef.current;
+      if (!column) return;
+
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      const rect = column.getBoundingClientRect();
+      const scrollThreshold = 80;
+      const scrollSpeed = 8;
+
+      const distanceFromTop = clientY - rect.top;
+      const distanceFromBottom = rect.bottom - clientY;
+
+      let scrollY = 0;
+
+      if (distanceFromTop < scrollThreshold && distanceFromTop > 0) {
+        scrollY = -scrollSpeed * (1 - distanceFromTop / scrollThreshold);
+      } else if (distanceFromBottom < scrollThreshold && distanceFromBottom > 0) {
+        scrollY = scrollSpeed * (1 - distanceFromBottom / scrollThreshold);
+      }
+
+      if (scrollY !== 0) {
+        const scroll = () => {
+          if (column && Math.abs(scrollY) > 0.1) {
+            column.scrollTop += scrollY;
+            animationFrameId.current = requestAnimationFrame(scroll);
+          }
+        };
+
+        if (!animationFrameId.current) {
+          animationFrameId.current = requestAnimationFrame(scroll);
+        }
+      } else {
+        if (animationFrameId.current) {
+          cancelAnimationFrame(animationFrameId.current);
+          animationFrameId.current = null;
+        }
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('touchmove', handleMouseMove, { passive: true });
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('touchmove', handleMouseMove);
+      if (animationFrameId.current) {
+        cancelAnimationFrame(animationFrameId.current);
+      }
+    };
+  }, [draggedTask]);
 
   return (
     <div 
-      className={`flex-1 min-w-72 bg-white rounded-lg shadow-md p-4 max-h-[80vh] overflow-y-auto ${
+      ref={columnRef}
+      className={`flex-1 min-w-72 bg-white rounded-lg shadow-md p-4 max-h-[80vh] overflow-y-auto scroll-smooth ${
         isOver && !dropTargetId ? 'ring-2 ring-blue-500' : '' 
       }`}
+      data-column
       data-column-id={columnId}
       onDragOver={(e) => handleDragOver(e, columnId)} 
       onDragLeave={(e) => handleDragLeave(e, columnId)} 

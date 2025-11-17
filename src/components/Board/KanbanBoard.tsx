@@ -14,6 +14,7 @@ import {
 } from "@/hooks/useTasksQuery";
 import { useTaskStore } from "@/hooks/useTaskStore";
 import { useDragAndDrop } from "@/hooks/useDragAndDrop";
+import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { COLUMNS } from "@/utils/constants";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { ColumnId, Task } from "@/types/task.types";
@@ -51,8 +52,15 @@ export default function KanbanBoardWithAPI() {
     tasks,
     (id, newColumn) => moveTask.mutate({ id, newColumn }),
     (columnId, orderedIds) =>
-      updateTaskOrder.mutate({ column: columnId as  Task["column"], taskIds: orderedIds })
+      updateTaskOrder.mutate({ column: columnId as Task["column"], taskIds: orderedIds })
   );
+
+  // Enable auto-scroll when dragging
+  useAutoScroll({ 
+    enabled: draggedTask !== null,
+    scrollThreshold: 100,
+    scrollSpeed: 15
+  });
 
   if (isLoading)
     return (
@@ -74,7 +82,8 @@ export default function KanbanBoardWithAPI() {
         />
 
         <div
-          className="flex gap-6 overflow-x-auto pb-4"
+          className="flex gap-6 overflow-x-auto overflow-y-auto pb-4 scroll-container"
+          style={{ maxHeight: 'calc(100vh - 200px)' }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDragEnd}
         >
