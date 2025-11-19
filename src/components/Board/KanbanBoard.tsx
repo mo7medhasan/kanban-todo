@@ -18,6 +18,7 @@ import { useAutoScroll } from "@/hooks/useAutoScroll";
 import { COLUMNS } from "@/utils/constants";
 import { useTaskFilters } from "@/hooks/useTaskFilters";
 import { ColumnId, Task } from "@/types/task.types";
+import { useRef } from "react";
 
 export default function KanbanBoardWithAPI() {
   const {
@@ -52,16 +53,19 @@ export default function KanbanBoardWithAPI() {
     tasks,
     (id, newColumn) => moveTask.mutate({ id, newColumn }),
     (columnId, orderedIds) =>
-      updateTaskOrder.mutate({ column: columnId as Task["column"], taskIds: orderedIds })
+      updateTaskOrder.mutate({
+        column: columnId as Task["column"],
+        taskIds: orderedIds,
+      })
   );
 
-  // Enable auto-scroll when dragging
-  useAutoScroll({ 
-    enabled: draggedTask !== null,
-    scrollThreshold: 100,
-    scrollSpeed: 15
-  });
+  const containerRef = useRef<HTMLDivElement>(null);
 
+  const { updateX } = useAutoScroll(containerRef, {
+    enabled: Boolean(draggedTask),
+    speed: 22,
+    edgeSize: 120,
+  });
   if (isLoading)
     return (
       <div className="text-center py-20 text-gray-600">Loading tasks...</div>
@@ -73,7 +77,7 @@ export default function KanbanBoardWithAPI() {
     );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-teal-600 to-cyan-70000 p-8">
+    <div className="min-h-screen bg-linear-to-br from-teal-600 to-cyan-700 md:p-8 p-4">
       <div className="max-w-7xl mx-auto">
         <SearchBar
           searchQuery={searchQuery}
@@ -82,9 +86,13 @@ export default function KanbanBoardWithAPI() {
         />
 
         <div
-          className="flex gap-6 overflow-x-auto overflow-y-auto pb-4 scroll-container"
-          style={{ maxHeight: 'calc(100vh - 200px)' }}
-          onDragOver={(e) => e.preventDefault()}
+          className="flex gap-6 overflow-x-auto pb-4 scroll-container"
+          style={{ maxHeight: "calc(100vh - 200px)" }}
+          ref={containerRef}
+          onDragOver={(e) => {
+            e.preventDefault();
+            updateX(e.clientX); // ← scroll now works!
+          }}
           onDrop={handleDragEnd}
         >
           {COLUMNS.map((column) => (

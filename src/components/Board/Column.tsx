@@ -40,10 +40,12 @@ export const Column: React.FC<ColumnProps> = ({
   
   const columnRef = useRef<HTMLDivElement>(null);
   const animationFrameId = useRef<number | null>(null);
+  const scrollVelocity = useRef(0);
 
-  // Auto-scroll within column when dragging near edges
+  // Auto-scroll within column when dragging near window edges
   useEffect(() => {
-    if (!draggedTask) {
+    if (!draggedTask || dragOverColumn !== columnId) {
+      scrollVelocity.current = 0;
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
         animationFrameId.current = null;
@@ -51,61 +53,76 @@ export const Column: React.FC<ColumnProps> = ({
       return;
     }
 
-    const handleMouseMove = (e: MouseEvent | TouchEvent) => {
+    const performScroll = () => {
+      const column = columnRef.current;
+      if (!column) return;
+
+      if (Math.abs(scrollVelocity.current) > 0.1) {
+        column.scrollTop += scrollVelocity.current;
+        animationFrameId.current = requestAnimationFrame(performScroll);
+      } else {
+        animationFrameId.current = null;
+      }
+    };
+
+    const handleMove = (e: MouseEvent | TouchEvent) => {
       const column = columnRef.current;
       if (!column) return;
 
       const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-      const rect = column.getBoundingClientRect();
-      const scrollThreshold = 80;
-      const scrollSpeed = 8;
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      
+      // Use window edges instead of column edges
+      const windowHeight = window.innerHeight;
+      const scrollThreshold = 100;
+      const scrollSpeed = 5;
 
-      const distanceFromTop = clientY - rect.top;
-      const distanceFromBottom = rect.bottom - clientY;
+      // Check if cursor is within the column horizontally
+      const columnRect = column.getBoundingClientRect();
+      const isWithinColumn = clientX >= columnRect.left && clientX <= columnRect.right;
+
+      if (!isWithinColumn) {
+        scrollVelocity.current = 0;
+        return;
+      }
+
+      const distanceFromTop = clientY;
+      const distanceFromBottom = windowHeight - clientY;
 
       let scrollY = 0;
 
+      // Scroll based on window edges
       if (distanceFromTop < scrollThreshold && distanceFromTop > 0) {
-        scrollY = -scrollSpeed * (1 - distanceFromTop / scrollThreshold);
+        const intensity = Math.pow((scrollThreshold - distanceFromTop) / scrollThreshold, 2);
+        scrollY = -scrollSpeed * intensity;
       } else if (distanceFromBottom < scrollThreshold && distanceFromBottom > 0) {
-        scrollY = scrollSpeed * (1 - distanceFromBottom / scrollThreshold);
+        const intensity = Math.pow((scrollThreshold - distanceFromBottom) / scrollThreshold, 2);
+        scrollY = scrollSpeed * intensity;
       }
 
-      if (scrollY !== 0) {
-        const scroll = () => {
-          if (column && Math.abs(scrollY) > 0.1) {
-            column.scrollTop += scrollY;
-            animationFrameId.current = requestAnimationFrame(scroll);
-          }
-        };
+      scrollVelocity.current = scrollY;
 
-        if (!animationFrameId.current) {
-          animationFrameId.current = requestAnimationFrame(scroll);
-        }
-      } else {
-        if (animationFrameId.current) {
-          cancelAnimationFrame(animationFrameId.current);
-          animationFrameId.current = null;
-        }
+      if (!animationFrameId.current && Math.abs(scrollY) > 0.1) {
+        animationFrameId.current = requestAnimationFrame(performScroll);
       }
     };
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('touchmove', handleMouseMove, { passive: true });
+    document.addEventListener('mousemove', handleMove, { passive: true });
+    document.addEventListener('touchmove', handleMove, { passive: true });
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('touchmove', handleMouseMove);
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('touchmove', handleMove);
       if (animationFrameId.current) {
         cancelAnimationFrame(animationFrameId.current);
       }
     };
-  }, [draggedTask]);
+  }, [draggedTask, dragOverColumn, columnId]);
 
   return (
     <div 
       ref={columnRef}
-      className={`flex-1 min-w-72 bg-white rounded-lg shadow-md p-4 max-h-[80vh] overflow-y-auto scroll-smooth ${
+      className={`flex-1 min-w-72 bg-white rounded-lg shadow-md p-4 md:max-h-[80vh] min-h-[70vh] overflow-y-auto ${
         isOver && !dropTargetId ? 'ring-2 ring-blue-500' : '' 
       }`}
       data-column
@@ -118,7 +135,7 @@ export const Column: React.FC<ColumnProps> = ({
       <h2 className="text-xl font-bold mb-4 text-gray-900">{title}</h2>
       
       <div 
-        className={`space-y-3 min-h-52 rounded-lg p-2 ${isEmpty ? 'bg-gray-50' : 'bg-gray-100'}`}
+        className={`space-y-3 md:min-h-52 min-h-[70vh]  rounded-lg p-2 ${isEmpty ? 'bg-gray-50' : 'bg-gray-100'}`}
         data-type="column"
         data-column-id={columnId}
       >

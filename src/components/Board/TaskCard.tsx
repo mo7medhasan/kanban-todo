@@ -21,94 +21,94 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   handleDragOver,
   handleDragLeave,
   handleDrop,
-  isDropTarget
+  // isDropTarget
 }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [touchStartY, setTouchStartY] = useState(0);
+  // const [isDragging, setIsDragging] = useState(false);
+  // const [touchStartY, setTouchStartY] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Touch event handlers for mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    setTouchStartY(touch.clientY);
-    setIsDragging(true);
+  // const handleTouchStart = (e: React.TouchEvent) => {
+  //   const touch = e.touches[0];
+  //   setTouchStartY(touch.clientY);
+  //   setIsDragging(true);
     
-    // Create a synthetic drag start event
-    const syntheticEvent = {
-      dataTransfer: {
-        effectAllowed: 'move',
-        setData: (type: string, val: string) => {},
-        getData: (type: string) => task._id,
-      },
-      preventDefault: () => {},
-      stopPropagation: () => {},
-    } as unknown as React.DragEvent;
+  //   // Create a synthetic drag start event
+  //   const syntheticEvent = {
+  //     dataTransfer: {
+  //       effectAllowed: 'move',
+  //       setData: (type: string, val: string) => {},
+  //       getData: (type: string) => task._id,
+  //     },
+  //     preventDefault: () => {},
+  //     stopPropagation: () => {},
+  //   } as unknown as React.DragEvent;
     
-    handleDragStart(syntheticEvent);
-  };
+  //   handleDragStart(syntheticEvent);
+  // };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging) return;
+  // const handleTouchMove = (e: React.TouchEvent) => {
+  //   if (!isDragging) return;
     
-    const touch = e.touches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+  //   const touch = e.touches[0];
+  //   const element = document.elementFromPoint(touch.clientX, touch.clientY);
     
-    // Find the closest task card or column
-    const targetCard = element?.closest('[data-task-card]');
-    const targetColumn = element?.closest('[data-column]');
+  //   // Find the closest task card or column
+  //   const targetCard = element?.closest('[data-task-card]');
+  //   const targetColumn = element?.closest('[data-column]');
     
-    if (targetCard || targetColumn) {
-      const syntheticEvent = {
-        preventDefault: () => {},
-        stopPropagation: () => {},
-        dataTransfer: {
-          getData: () => task._id,
-        },
-      } as unknown as React.DragEvent;
+  //   if (targetCard || targetColumn) {
+  //     const syntheticEvent = {
+  //       preventDefault: () => {},
+  //       stopPropagation: () => {},
+  //       dataTransfer: {
+  //         getData: () => task._id,
+  //       },
+  //     } as unknown as React.DragEvent;
       
-      handleDragOver(syntheticEvent);
-    }
+  //     handleDragOver(syntheticEvent);
+  //   }
     
-    // Visual feedback - move the card with touch
-    if (cardRef.current) {
-      const deltaY = touch.clientY - touchStartY;
-      cardRef.current.style.transform = `translateY(${deltaY}px)`;
-      cardRef.current.style.opacity = '0.7';
-    }
-  };
+  //   // Visual feedback - move the card with touch
+  //   if (cardRef.current) {
+  //     const deltaY = touch.clientY - touchStartY;
+  //     cardRef.current.style.transform = `translateY(${deltaY}px)`;
+  //     cardRef.current.style.opacity = '0.7';
+  //   }
+  // };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!isDragging) return;
+  // const handleTouchEnd = (e: React.TouchEvent) => {
+  //   if (!isDragging) return;
     
-    setIsDragging(false);
+  //   setIsDragging(false);
     
-    // Reset visual state
-    if (cardRef.current) {
-      cardRef.current.style.transform = '';
-      cardRef.current.style.opacity = '';
-    }
+  //   // Reset visual state
+  //   if (cardRef.current) {
+  //     cardRef.current.style.transform = '';
+  //     cardRef.current.style.opacity = '';
+  //   }
     
-    const touch = e.changedTouches[0];
-    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+  //   const touch = e.changedTouches[0];
+  //   const element = document.elementFromPoint(touch.clientX, touch.clientY);
     
-    // Find drop target
-    const targetCard = element?.closest('[data-task-card]');
-    const targetColumn = element?.closest('[data-column]');
+  //   // Find drop target
+  //   const targetCard = element?.closest('[data-task-card]');
+  //   const targetColumn = element?.closest('[data-column]');
     
-    if (targetCard || targetColumn) {
-      const syntheticEvent = {
-        preventDefault: () => {},
-        stopPropagation: () => {},
-        dataTransfer: {
-          getData: () => task._id,
-        },
-      } as unknown as React.DragEvent;
+  //   if (targetCard || targetColumn) {
+  //     const syntheticEvent = {
+  //       preventDefault: () => {},
+  //       stopPropagation: () => {},
+  //       dataTransfer: {
+  //         getData: () => task._id,
+  //       },
+  //     } as unknown as React.DragEvent;
       
-      handleDrop(syntheticEvent);
-    } else {
-      handleDragLeave({} as React.DragEvent);
-    }
-  };
+  //     handleDrop(syntheticEvent);
+  //   } else {
+  //     handleDragLeave({} as React.DragEvent);
+  //   }
+  // };
 
   return (
     <div
@@ -119,12 +119,10 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       onDragOver={handleDragOver} 
       onDragLeave={handleDragLeave} 
       onDrop={handleDrop}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      className={`bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-move ${
-        isDropTarget ? 'ring-2 ring-blue-500' : '' 
-      } ${isDragging ? 'opacity-70 scale-105' : ''}`}
+      // onTouchStart={handleTouchStart}
+      // onTouchMove={handleTouchMove}
+      // onTouchEnd={handleTouchEnd}
+      className={`bg-white rounded-lg p-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-move `}
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex-1">
