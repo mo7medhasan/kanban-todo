@@ -47,7 +47,7 @@ export async function DELETE(
   request: Request,
   context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params; // ✅
+  const { id } = await context.params;  
   const client = await clientPromise;
   const db = client.db(process.env.MONGODB_DB);
 
